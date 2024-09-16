@@ -83,7 +83,7 @@ const server = http.createServer((req, res) => {
       "Content-Type": "application/json",
       "my-server-name": "todo",
     });
-    
+
     // !FIXME: there is bug when todo is null / undefined
     res.write(
       JSON.stringify({
@@ -141,13 +141,16 @@ const server = http.createServer((req, res) => {
         message: "All todos fetched successfully",
       })
     );
+    console.log(todos);
     res.end();
   }
 
 
   // update todo
 
- 
+  
+
+
 });
 
 server.listen(PORT, () => {
