@@ -21,6 +21,7 @@ let todos: TTodo[] = [
     name: "hari",
   },
 ];
+
 const server = http.createServer((req, res) => {
   console.log("request received", req.url);
 
@@ -51,48 +52,73 @@ const server = http.createServer((req, res) => {
   }
 
   // get todo
+  // TODO: fix me later. use a url parser
   if (req.url?.includes("/get-todo") && req.method === "GET") {
-    const url = req.url;
+    const url = req.url; // /get-todo?id=4
+
+    // ['/get-todo', "id=4"]
+    // ["id=4"]
+    // ['id', '4']
+
     const todoId = url.split("=").pop();
 
     if (!todoId) {
       console.error(`Please send todoId`);
+      // TODO: send the error to the client
       return;
     }
 
     const todoIdNum = parseInt(todoId);
     console.log("getting todoId", todoId);
 
-    const todo = todos.find((todo) => todo.id === todoIdNum);
+    const todo = todos.find((todo) => {
+      if (todo.id === todoIdNum) return true;
+
+      return false;
+    });
+
+    console.log(`todo found by id: ${todoId}`, todo);
 
     res.writeHead(200, "Get todo success", {
       "Content-Type": "application/json",
       "my-server-name": "todo",
     });
+    
+    // !FIXME: there is bug when todo is null / undefined
     res.write(
       JSON.stringify({
         data: todo,
-        message: "Todo get successfully",
+        message: "todo get successfully",
       })
     );
+
     res.end();
   }
 
   // delete todo
   if (req.url?.includes(`/delete-todo`) && req.method === "DELETE") {
-    const url = req.url;
+    const url = req.url; // /delete-todo?id=4
     const todoId = url.split("=").pop();
 
     if (!todoId) {
       console.error(`Please send todoId`);
+      // TODO: send the error to the client
       return;
     }
 
     const todoIdNum = parseInt(todoId);
     console.log("getting todoId", todoId);
 
-    todos = todos.filter((todo) => todo.id !== todoIdNum);
+    const filteredArray = todos.filter((todo) => {
+      if (todo.id === todoIdNum) {
+        return false;
+      }
+      return true;
+    });
 
+    todos = filteredArray;
+
+    // send response to the client
     res.writeHead(200, "todo deleted successfully", {
       "Content-Type": "application/json",
     });
@@ -120,49 +146,6 @@ const server = http.createServer((req, res) => {
 
 
   // update todo
-if (req.url?.includes(`/update-todo`) && req.method === "PUT") {
-  let bodyStr = "";
-
-  req.on("data", (chunk) => {
-    const chunkStr = chunk.toString();
-    bodyStr += chunkStr;
-  });
-
-  req.on("end", () => {
-    const parsedData = JSON.parse(bodyStr);
-    const todoId = parseInt(req.url?.split("=").pop() || "");
-
-    if (!todoId) {
-      console.error("Please send valid todoId");
-      res.writeHead(400, "Invalid todoId");
-      res.write("Invalid todoId");
-      res.end();
-      return;
-    }
-
-    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
-
-    if (todoIndex === -1) {
-      res.writeHead(404, "Todo not found");
-      res.write("Todo not found");
-      res.end();
-      return;
-    }
-
-    // Update the name of the todo
-    todos[todoIndex].name = parsedData.name;
-
-    res.writeHead(200, "Todo updated successfully", {
-      "Content-Type": "application/json",
-    });
-    res.write(
-      JSON.stringify({
-        message: "Todo updated successfully",
-      })
-    );
-    res.end();
-  });
-}
 
  
 });
