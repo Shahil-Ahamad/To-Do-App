@@ -87,7 +87,7 @@ const server = http.createServer((req, res) => {
     // !FIXME: there is bug when todo is null / undefined
     res.write(
       JSON.stringify({
-        data: todo,
+        data: !todo ? null : todo,
         message: "todo get successfully",
       })
     );
@@ -145,10 +145,7 @@ const server = http.createServer((req, res) => {
     res.end();
   }
 
-
   // update todo
-
-  
 
 
 });
