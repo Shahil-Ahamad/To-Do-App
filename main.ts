@@ -146,7 +146,6 @@ const server = http.createServer((req, res) => {
   }
 
   // update todo
-  
   if (req.url === "/update-todo" && req.method === "PUT") {
     const updateTodo = (id: number, newName: string) => {
       const todoIndex = todos.findIndex((todo) => todo.id === id);
