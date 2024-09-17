@@ -89,7 +89,7 @@ const server = http.createServer((req, res) => {
       JSON.stringify({
         data: !todo ? null : todo,
         message: "todo get successfully",
-      })
+      }),
     );
 
     res.end();
@@ -125,7 +125,7 @@ const server = http.createServer((req, res) => {
     res.write(
       JSON.stringify({
         message: "Todo deleted successfully",
-      })
+      }),
     );
     res.end();
   }
@@ -139,13 +139,31 @@ const server = http.createServer((req, res) => {
       JSON.stringify({
         data: todos,
         message: "All todos fetched successfully",
-      })
+      }),
     );
     console.log(todos);
     res.end();
   }
 
   // update todo
+  
+  if (req.url === "/update-todo" && req.method === "PUT") {
+    const updateTodo = (id: number, newName: string) => {
+      const todoIndex = todos.findIndex((todo) => todo.id === id);
+      if (todoIndex !== -1) {
+        todos[todoIndex].name = newName;
+        return todos[todoIndex];
+      }
+    };
+    const updatedUser = updateTodo(2, "jhone");
+    console.log("update data:", updatedUser);
+    res.write(
+      JSON.stringify({
+        message: "todo update successfully",
+      }),
+    );
+    res.end();
+  }
 
 
 });
